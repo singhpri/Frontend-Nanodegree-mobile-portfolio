@@ -437,7 +437,7 @@ var resizePizzas = function(size) {
     }
 
     var newwidth = sizeSwitcher(size);
-    var container = document.querySelectorAll(".randomPizzaContainer");
+    var container = document.getElementsByClassName('randomPizzaContainer');
     // Iterates through pizza elements on the page and changes their widths
     for (var i = 0; i < container.length; i++) {
       container[i].style.width = newwidth + "%";
@@ -453,8 +453,8 @@ var resizePizzas = function(size) {
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
-for (var i = 2; i < 30; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
+var pizzasDiv = document.getElementById("randomPizzas");
+for (var i = 2; i < 100; i++) {
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
@@ -485,13 +485,16 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
-
-  var items = document.querySelectorAll('.mover');
+  var items = document.getElementsByClassName('mover'); //cache items
   var cachedScrollTop = document.body.scrollTop;
-  for (var i = 0; i < items.length; i++) {
-    var phase = Math.sin((cachedScrollTop / 1250) + (i % 5));
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-  }
+  var len = items.length;//cache length
+  var phase = [];
+  for (var i = 0; i < 5; i++) {
+    phase.push(Math.sin(cachedScrollTop / 1250 + i) * 100);
+}
+for (var i = 0; i < len; i++) {
+    items[i].style.left = items[i].basicLeft + phase[i%5] + 'px';
+}
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
@@ -510,7 +513,8 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  for (var i = 0; i < 55; i++) {
+  var numPizza = window.innerHeight/s * cols;
+  for (var i = 0; i < numPizza; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza-100small.png";
